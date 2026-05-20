@@ -3,6 +3,7 @@ name = "agentworkos-self"
 version = "0.1.0"
 platforms = ["windows-x64", "darwin-arm64", "linux-x64"]
 codex_home = "~/.codex"
+claude_home = "~/.claude"
 
 [[packages]]
 id = "io.github.harzva.agentworkos.inventory"
@@ -11,11 +12,29 @@ source = "."
 path = "skills/agentworkos-inventory"
 install_to = "skills/agentworkos-inventory"
 
+[[packages.targets]]
+runtime = "codex"
+install_to = "skills/agentworkos-inventory"
+
+[[packages.targets]]
+runtime = "claude-code"
+install_to = "skills/agentworkos-inventory"
+adapter = "skill-to-claude-skill"
+
 [[packages]]
 id = "io.github.harzva.agentworkos.terms"
 type = "terms"
 source = "./TERMS.md"
 install_to = "agents/TERMS.md"
+
+[[packages.targets]]
+runtime = "codex"
+install_to = "agents/TERMS.md"
+
+[[packages.targets]]
+runtime = "claude-code"
+install_to = "TERMS.md"
+adapter = "terms-to-claude-memory"
 
 [[repos]]
 id = "io.github.harzva.agentworkos"

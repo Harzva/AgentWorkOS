@@ -34,6 +34,7 @@ def cmd_init(args: argparse.Namespace) -> int:
 def cmd_scan(args: argparse.Namespace) -> int:
     state = scan_environment(
         codex_home=Path(args.codex_home).expanduser() if args.codex_home else None,
+        claude_home=Path(args.claude_home).expanduser() if args.claude_home else None,
         workspace=Path(args.workspace).expanduser() if args.workspace else None,
     )
     output_json = Path(args.output_json)
@@ -42,7 +43,17 @@ def cmd_scan(args: argparse.Namespace) -> int:
     output_md.write_text(render_audit(state), encoding="utf-8")
     print(f"wrote: {output_json}")
     print(f"wrote: {output_md}")
-    print(f"skills={state['summary']['skills']} agents={state['summary']['agents']} repos={state['summary']['repos']}")
+    print(
+        " ".join(
+            [
+                f"codex_skills={state['summary']['skills']}",
+                f"codex_agents={state['summary']['agents']}",
+                f"claude_skills={state['summary']['claude_skills']}",
+                f"claude_agents={state['summary']['claude_agents']}",
+                f"repos={state['summary']['repos']}",
+            ]
+        )
+    )
     return 0
 
 
@@ -60,7 +71,7 @@ def cmd_doctor(args: argparse.Namespace) -> int:
 
 
 def cmd_sync(args: argparse.Namespace) -> int:
-    report = sync_manifest(Path(args.manifest), apply=args.apply)
+    report = sync_manifest(Path(args.manifest), apply=args.apply, target=args.target)
     for action in report["actions"]:
         print(action)
     if not args.apply:
@@ -77,7 +88,7 @@ def cmd_explain(args: argparse.Namespace) -> int:
 
 
 def build_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(prog="awos", description="AgentWorkOS package manager")
+    parser = argparse.ArgumentParser(prog="aw", description="AgentWorkOS package manager")
     sub = parser.add_subparsers(dest="command", required=True)
 
     init = sub.add_parser("init", help="create an agentworkos.toml and TERMS.md")
@@ -88,6 +99,7 @@ def build_parser() -> argparse.ArgumentParser:
 
     scan = sub.add_parser("scan", help="scan local AgentWorkOS runtime and workspace")
     scan.add_argument("--codex-home", default="")
+    scan.add_argument("--claude-home", default="")
     scan.add_argument("--workspace", default=".")
     scan.add_argument("--output-json", default="agentworkos.state.json")
     scan.add_argument("--output-md", default="AGENTWORKOS_AUDIT.md")
@@ -105,6 +117,7 @@ def build_parser() -> argparse.ArgumentParser:
 
     sync = sub.add_parser("sync", help="sync local packages into runtime; dry-run by default")
     sync.add_argument("--manifest", default="agentworkos.toml")
+    sync.add_argument("--target", choices=["codex", "claude", "claude-code"], default="codex")
     sync.add_argument("--apply", action="store_true")
     sync.set_defaults(func=cmd_sync)
 
@@ -128,7 +141,7 @@ def main(argv: list[str] | None = None) -> int:
     try:
         return args.func(args)
     except Exception as exc:  # noqa: BLE001 - CLI needs concise user-facing errors.
-        print(f"awos: error: {exc}", file=sys.stderr)
+        print(f"aw: error: {exc}", file=sys.stderr)
         return 2
 
 

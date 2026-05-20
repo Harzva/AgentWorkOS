@@ -19,7 +19,7 @@ AgentWorkOS borrows from mature package and environment managers.
 | `uv.lock` / `flake.lock` | `agentworkos.lock.json` |
 | virtual environment | `.codex` runtime plus checked-out source repos |
 | package metadata | `agentpkg.toml` |
-| environment doctor | `awos doctor` |
+| environment doctor | `aw doctor` |
 
 ## Boundary
 

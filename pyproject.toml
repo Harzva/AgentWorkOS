@@ -25,6 +25,7 @@ classifiers = [
 ]
 
 [project.scripts]
+aw = "agentworkos.cli:main"
 awos = "agentworkos.cli:main"
 
 [tool.setuptools.packages.find]

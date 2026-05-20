@@ -48,6 +48,13 @@ def default_codex_home() -> Path:
     return Path.home() / ".codex"
 
 
+def default_claude_home() -> Path:
+    env = os.environ.get("CLAUDE_HOME")
+    if env:
+        return Path(env).expanduser()
+    return Path.home() / ".claude"
+
+
 def json_dump(path: Path, payload: Any) -> None:
     path.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 

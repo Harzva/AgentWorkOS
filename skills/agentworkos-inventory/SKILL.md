@@ -12,7 +12,7 @@ Use this skill to turn a local AI agent workspace into a package-managed environ
 1. Scan the runtime.
 
    ```powershell
-   awos scan --codex-home "$env:USERPROFILE\.codex" --workspace .
+   aw scan --codex-home "$env:USERPROFILE\.codex" --workspace .
    ```
 
 2. Inspect `AGENTWORKOS_AUDIT.md`.
@@ -22,20 +22,20 @@ Use this skill to turn a local AI agent workspace into a package-managed environ
 4. Generate a lockfile.
 
    ```powershell
-   awos lock
+   aw lock
    ```
 
 5. Run doctor.
 
    ```powershell
-   awos doctor
+   aw doctor
    ```
 
 6. Sync safely.
 
    ```powershell
-   awos sync
-   awos sync --apply
+   aw sync
+   aw sync --apply
    ```
 
 ## Three-End Sync

@@ -28,10 +28,21 @@ def run_doctor(manifest_path: Path) -> dict[str, Any]:
         if not package.get("install_to"):
             findings.append({"severity": "warning", "message": f"package has no install_to: {package_id}"})
 
+        for target in package.get("targets", []):
+            runtime = target.get("runtime", "")
+            install_to = target.get("install_to", "")
+            if runtime not in {"codex", "claude", "claude-code"}:
+                findings.append({"severity": "warning", "message": f"unknown target runtime for {package_id}: {runtime}"})
+            if not install_to:
+                findings.append({"severity": "warning", "message": f"target has no install_to for {package_id}: {runtime}"})
+
     stack = manifest.get("stack", {})
     codex_home = stack.get("codex_home", "")
     if codex_home and not Path(codex_home).expanduser().exists():
         findings.append({"severity": "warning", "message": f"codex_home does not exist: {codex_home}"})
+    claude_home = stack.get("claude_home", "")
+    if claude_home and not Path(claude_home).expanduser().exists():
+        findings.append({"severity": "warning", "message": f"claude_home does not exist: {claude_home}"})
 
     return {
         "schema": "agentworkos.doctor.v1",

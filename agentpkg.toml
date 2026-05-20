@@ -17,5 +17,5 @@ target = "repos/AgentWorkOS"
 entrypoint = "pyproject.toml"
 commands = [
   "python -m pytest -q",
-  "awos doctor --manifest agentworkos.toml"
+  "aw doctor --manifest agentworkos.toml"
 ]

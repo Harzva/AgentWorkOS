@@ -9,7 +9,8 @@
       "darwin-arm64",
       "linux-x64"
     ],
-    "codex_home": "~/.codex"
+    "codex_home": "~/.codex",
+    "claude_home": "~/.claude"
   },
   "packages": [
     {
@@ -18,10 +19,23 @@
       "source": ".",
       "path": "skills/agentworkos-inventory",
       "install_to": "skills/agentworkos-inventory",
+      "targets": [
+        {
+          "runtime": "codex",
+          "install_to": "skills/agentworkos-inventory"
+        },
+        {
+          "runtime": "claude-code",
+          "install_to": "skills/agentworkos-inventory",
+          "adapter": "skill-to-claude-skill"
+        }
+      ],
       "ref": "main",
       "resolved_path": ".",
-      "source_kind": "directory",
-      "content_hash": "798862b8a91a541a6a4fc2a889003009c740666b9a0abe2ab58928344e0cbcf2"
+      "source_kind": "git-local",
+      "remote": "https://github.com/Harzva/AgentWorkOS.git",
+      "commit": "caff63ffabe43c4ce78a6f36b0acc8ebe0070d51",
+      "content_hash": "225a5d0ccac6f86323a02d17b8903b546ecef2027fed2ffa50c2ff915d565306"
     },
     {
       "id": "io.github.harzva.agentworkos.terms",
@@ -29,6 +43,17 @@
       "source": "./TERMS.md",
       "path": "",
       "install_to": "agents/TERMS.md",
+      "targets": [
+        {
+          "runtime": "codex",
+          "install_to": "agents/TERMS.md"
+        },
+        {
+          "runtime": "claude-code",
+          "install_to": "TERMS.md",
+          "adapter": "terms-to-claude-memory"
+        }
+      ],
       "ref": "main",
       "resolved_path": "./TERMS.md",
       "content_hash": "151e42a80792416f7d37204a26c07d01df97dbe6f92610504d38bdaaed005e46",

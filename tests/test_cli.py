@@ -10,7 +10,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 
 
-def run_awos(*args: str, cwd: Path) -> subprocess.CompletedProcess[str]:
+def run_aw(*args: str, cwd: Path) -> subprocess.CompletedProcess[str]:
     return subprocess.run(
         [sys.executable, "-m", "agentworkos.cli", *args],
         cwd=cwd,
@@ -24,19 +24,29 @@ def run_awos(*args: str, cwd: Path) -> subprocess.CompletedProcess[str]:
 
 
 def test_init_and_explain(tmp_path: Path) -> None:
-    result = run_awos("init", "--root", str(tmp_path), cwd=ROOT)
+    result = run_aw("init", "--root", str(tmp_path), cwd=ROOT)
     assert result.returncode == 0, result.stderr
     assert (tmp_path / "agentworkos.toml").exists()
-    explain = run_awos("explain", "三端同步", "--terms", str(tmp_path / "TERMS.md"), cwd=ROOT)
+    explain = run_aw("explain", "三端同步", "--terms", str(tmp_path / "TERMS.md"), cwd=ROOT)
     assert explain.returncode == 0
     assert "Runtime copy" in explain.stdout
 
 
 def test_scan_detects_skill_and_repo(tmp_path: Path) -> None:
     codex_home = tmp_path / ".codex"
+    claude_home = tmp_path / ".claude"
     skill = codex_home / "skills" / "demo-skill"
     skill.mkdir(parents=True)
     (skill / "SKILL.md").write_text("---\nname: demo-skill\n---\n# Demo\n", encoding="utf-8")
+    claude_skill = claude_home / "skills" / "demo-claude"
+    claude_skill.mkdir(parents=True)
+    (claude_skill / "SKILL.md").write_text("---\nname: demo-claude\n---\n# Demo\n", encoding="utf-8")
+    claude_agent = claude_home / "agents" / "reviewer.md"
+    claude_agent.parent.mkdir(parents=True)
+    claude_agent.write_text("---\nname: reviewer\n---\n# Reviewer\n", encoding="utf-8")
+    claude_command = claude_home / "commands" / "ship.md"
+    claude_command.parent.mkdir(parents=True)
+    claude_command.write_text("# Ship\n", encoding="utf-8")
     repo = tmp_path / "repo"
     repo.mkdir()
     subprocess.run(["git", "init", "-b", "main"], cwd=repo, check=True, stdout=subprocess.PIPE)
@@ -48,10 +58,12 @@ def test_scan_detects_skill_and_repo(tmp_path: Path) -> None:
 
     output_json = tmp_path / "state.json"
     output_md = tmp_path / "audit.md"
-    result = run_awos(
+    result = run_aw(
         "scan",
         "--codex-home",
         str(codex_home),
+        "--claude-home",
+        str(claude_home),
         "--workspace",
         str(tmp_path),
         "--output-json",
@@ -63,6 +75,9 @@ def test_scan_detects_skill_and_repo(tmp_path: Path) -> None:
     assert result.returncode == 0, result.stderr
     state = json.loads(output_json.read_text(encoding="utf-8"))
     assert state["summary"]["skills"] == 1
+    assert state["summary"]["claude_skills"] == 1
+    assert state["summary"]["claude_agents"] == 1
+    assert state["summary"]["claude_commands"] == 1
     assert state["summary"]["repos"] == 1
 
 
@@ -84,8 +99,53 @@ install_to = "agents/TERMS.md"
         encoding="utf-8",
     )
     lock_path = tmp_path / "agentworkos.lock.json"
-    result = run_awos("lock", "--manifest", str(tmp_path / "agentworkos.toml"), "--output", str(lock_path), "--offline", cwd=ROOT)
+    result = run_aw("lock", "--manifest", str(tmp_path / "agentworkos.toml"), "--output", str(lock_path), "--offline", cwd=ROOT)
     assert result.returncode == 0, result.stderr
     lock = json.loads(lock_path.read_text(encoding="utf-8"))
     assert lock["packages"][0]["id"] == "local.terms"
     assert lock["packages"][0]["content_hash"]
+
+
+def test_sync_uses_runtime_targets(tmp_path: Path) -> None:
+    package_dir = tmp_path / "skill"
+    package_dir.mkdir()
+    (package_dir / "SKILL.md").write_text("# Skill\n", encoding="utf-8")
+    codex_home = tmp_path / ".codex"
+    claude_home = tmp_path / ".claude"
+    codex_home_toml = str(codex_home).replace("\\", "/")
+    claude_home_toml = str(claude_home).replace("\\", "/")
+    manifest = tmp_path / "agentworkos.toml"
+    manifest.write_text(
+        f"""
+[stack]
+name = "test"
+version = "0.1.0"
+codex_home = "{codex_home_toml}"
+claude_home = "{claude_home_toml}"
+
+[[packages]]
+id = "local.skill"
+type = "skill"
+source = "./skill"
+install_to = "skills/local-skill"
+
+[[packages.targets]]
+runtime = "codex"
+install_to = "skills/local-skill"
+
+[[packages.targets]]
+runtime = "claude-code"
+install_to = "skills/local-skill-claude"
+adapter = "skill-to-claude-skill"
+""".strip()
+        + "\n",
+        encoding="utf-8",
+    )
+
+    codex = run_aw("sync", "--manifest", str(manifest), "--target", "codex", cwd=ROOT)
+    claude = run_aw("sync", "--manifest", str(manifest), "--target", "claude-code", cwd=ROOT)
+
+    assert codex.returncode == 0, codex.stderr
+    assert claude.returncode == 0, claude.stderr
+    assert "skills\\local-skill" in codex.stdout or "skills/local-skill" in codex.stdout
+    assert "skills\\local-skill-claude" in claude.stdout or "skills/local-skill-claude" in claude.stdout

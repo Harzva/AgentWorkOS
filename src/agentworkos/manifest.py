@@ -17,11 +17,13 @@ def quote_toml(value: str) -> str:
 
 def write_sample_stack(path: Path, codex_home: Path | None = None) -> None:
     codex = str(codex_home or Path.home() / ".codex").replace("\\", "/")
+    claude = str(Path.home() / ".claude").replace("\\", "/")
     content = f"""[stack]
 name = "default-agentworkos"
 version = "0.1.0"
 platforms = ["windows-x64", "darwin-arm64", "linux-x64"]
 codex_home = {quote_toml(codex)}
+claude_home = {quote_toml(claude)}
 
 [[packages]]
 id = "io.github.just-agent.readme-design"
@@ -31,11 +33,29 @@ path = "skills/readme-design"
 install_to = "skills/readme-design"
 ref = "main"
 
+[[packages.targets]]
+runtime = "codex"
+install_to = "skills/readme-design"
+
+[[packages.targets]]
+runtime = "claude-code"
+install_to = "skills/readme-design"
+adapter = "skill-to-claude-skill"
+
 [[packages]]
 id = "local.terms"
 type = "terms"
 source = "./TERMS.md"
 install_to = "agents/TERMS.md"
+
+[[packages.targets]]
+runtime = "codex"
+install_to = "agents/TERMS.md"
+
+[[packages.targets]]
+runtime = "claude-code"
+install_to = "TERMS.md"
+adapter = "terms-to-claude-memory"
 
 [[repos]]
 id = "io.github.harzva.make-windows-silky"

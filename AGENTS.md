@@ -6,7 +6,7 @@ AgentWorkOS makes AI agent workspaces package-managed: scannable, lockable, inst
 
 ## Package Manager Safety
 
-- `awos sync` must be dry-run by default.
+- `aw sync` must be dry-run by default.
 - Runtime writes require an explicit `--apply` flag.
 - Do not commit secrets, cookies, tokens, raw private chat logs, or local credential files.
 - Prefer manifests, lockfiles, schemas, and doctor checks over undocumented local state.
@@ -16,7 +16,7 @@ AgentWorkOS makes AI agent workspaces package-managed: scannable, lockable, inst
 - `AgentWorkOS` is the operating layer and ecosystem.
 - `AgentWorkOS Package` is one installable capability unit: Skill, Agent role, Rule, Term map, Prompt, SOP, Hook, MCP config, or Repo.
 - `AgentWorkOS Stack` is a complete environment declaration, similar to a conda environment or requirements file.
-- `awos` is the CLI package manager.
+- `aw` is the CLI package manager.
 
 ## Completion Gate
 

@@ -45,6 +45,7 @@ def create_lock(manifest_path: Path, offline: bool = False) -> dict[str, Any]:
             "source": source,
             "path": package.get("path", ""),
             "install_to": package.get("install_to", ""),
+            "targets": package.get("targets", []),
             "ref": ref,
         }
         if source.startswith("git+") or source.startswith("https://"):

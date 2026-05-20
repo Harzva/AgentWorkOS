@@ -10,15 +10,15 @@ $repo = Resolve-Path -LiteralPath $Root
 Push-Location $repo
 try {
     python -m pip install -e .
-    awos init --root .
-    awos scan --workspace .
-    awos lock --offline
-    awos doctor
+    aw init --root .
+    aw scan --workspace .
+    aw lock --offline
+    aw doctor
     if ($Apply) {
-        awos sync --apply
+        aw sync --apply
     }
     else {
-        awos sync
+        aw sync
     }
 }
 finally {

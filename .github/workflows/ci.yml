@@ -23,4 +23,4 @@ jobs:
           python -m json.tool schemas/agentpkg.schema.json > /dev/null
           python -m json.tool schemas/agentworkos-lock.schema.json > /dev/null
       - name: AgentWorkOS doctor
-        run: awos doctor --manifest agentworkos.toml
+        run: aw doctor --manifest agentworkos.toml

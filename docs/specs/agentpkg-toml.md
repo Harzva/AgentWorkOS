@@ -20,6 +20,15 @@ path = "skills/readme-design"
 [install]
 target = "skills/readme-design"
 
+[[targets]]
+runtime = "codex"
+install_to = "skills/readme-design"
+
+[[targets]]
+runtime = "claude-code"
+install_to = "skills/readme-design"
+adapter = "skill-to-claude-skill"
+
 [verify]
 entrypoint = "SKILL.md"
 ```
@@ -48,3 +57,9 @@ Every package should have:
 - license;
 - README or usage notes;
 - no secrets or private raw logs.
+
+## Runtime Targets
+
+`targets` are optional runtime projections. They let one canonical package declare different install paths for Codex, Claude Code, and future agent runtimes.
+
+AgentWorkOS should not pretend all runtimes are identical. It should preserve one canonical source and adapt it carefully.

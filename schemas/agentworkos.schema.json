@@ -12,7 +12,8 @@
         "name": { "type": "string", "minLength": 1 },
         "version": { "type": "string" },
         "platforms": { "type": "array", "items": { "type": "string" } },
-        "codex_home": { "type": "string" }
+        "codex_home": { "type": "string" },
+        "claude_home": { "type": "string" }
       },
       "additionalProperties": true
     },
@@ -37,7 +38,24 @@
         "source": { "type": "string", "minLength": 1 },
         "path": { "type": "string" },
         "install_to": { "type": "string" },
-        "ref": { "type": "string" }
+        "ref": { "type": "string" },
+        "targets": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/targetRef" }
+        }
+      },
+      "additionalProperties": true
+    },
+    "targetRef": {
+      "type": "object",
+      "required": ["runtime", "install_to"],
+      "properties": {
+        "runtime": { "enum": ["codex", "claude", "claude-code"] },
+        "install_to": { "type": "string", "minLength": 1 },
+        "adapter": { "type": "string" },
+        "lossiness": { "type": "string" },
+        "verify": { "type": "string" },
+        "notes": { "type": "string" }
       },
       "additionalProperties": true
     },

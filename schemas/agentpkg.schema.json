@@ -36,10 +36,29 @@
       },
       "additionalProperties": true
     },
+    "targets": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/targetRef" }
+    },
     "verify": {
       "type": "object",
       "properties": {
         "entrypoint": { "type": "string" }
+      },
+      "additionalProperties": true
+    }
+  },
+  "$defs": {
+    "targetRef": {
+      "type": "object",
+      "required": ["runtime", "install_to"],
+      "properties": {
+        "runtime": { "enum": ["codex", "claude", "claude-code"] },
+        "install_to": { "type": "string", "minLength": 1 },
+        "adapter": { "type": "string" },
+        "lossiness": { "type": "string" },
+        "verify": { "type": "string" },
+        "notes": { "type": "string" }
       },
       "additionalProperties": true
     }

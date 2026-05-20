@@ -19,6 +19,10 @@
           "source": { "type": "string" },
           "path": { "type": "string" },
           "install_to": { "type": "string" },
+          "targets": {
+            "type": "array",
+            "items": { "type": "object", "additionalProperties": true }
+          },
           "ref": { "type": "string" },
           "commit": { "type": "string" },
           "content_hash": { "type": "string" },
