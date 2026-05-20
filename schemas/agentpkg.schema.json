@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://agentworkos.dev/schemas/agentpkg.schema.json",
+  "title": "AgentWorkOS Package Manifest",
+  "type": "object",
+  "required": ["package", "source", "install"],
+  "properties": {
+    "package": {
+      "type": "object",
+      "required": ["id", "name", "type", "version"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "name": { "type": "string", "minLength": 1 },
+        "type": {
+          "enum": ["skill", "agent", "rule", "terms", "prompt", "sop", "hook", "mcp", "repo"]
+        },
+        "version": { "type": "string" },
+        "description": { "type": "string" },
+        "license": { "type": "string" }
+      },
+      "additionalProperties": true
+    },
+    "source": {
+      "type": "object",
+      "properties": {
+        "repo": { "type": "string" },
+        "path": { "type": "string" }
+      },
+      "additionalProperties": true
+    },
+    "install": {
+      "type": "object",
+      "required": ["target"],
+      "properties": {
+        "target": { "type": "string" }
+      },
+      "additionalProperties": true
+    },
+    "verify": {
+      "type": "object",
+      "properties": {
+        "entrypoint": { "type": "string" }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}

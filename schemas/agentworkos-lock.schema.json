@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://agentworkos.dev/schemas/agentworkos-lock.schema.json",
+  "title": "AgentWorkOS Lockfile",
+  "type": "object",
+  "required": ["schema", "packages"],
+  "properties": {
+    "schema": { "const": "agentworkos.lock.v1" },
+    "manifest": { "type": "string" },
+    "stack": { "type": "object" },
+    "packages": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "type", "source"],
+        "properties": {
+          "id": { "type": "string" },
+          "type": { "type": "string" },
+          "source": { "type": "string" },
+          "path": { "type": "string" },
+          "install_to": { "type": "string" },
+          "ref": { "type": "string" },
+          "commit": { "type": "string" },
+          "content_hash": { "type": "string" },
+          "warning": { "type": "string" }
+        },
+        "additionalProperties": true
+      }
+    },
+    "repos": {
+      "type": "array",
+      "items": { "type": "object", "additionalProperties": true }
+    }
+  },
+  "additionalProperties": true
+}

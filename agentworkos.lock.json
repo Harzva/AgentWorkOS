@@ -1,0 +1,46 @@
+{
+  "schema": "agentworkos.lock.v1",
+  "manifest": "agentworkos.toml",
+  "stack": {
+    "name": "agentworkos-self",
+    "version": "0.1.0",
+    "platforms": [
+      "windows-x64",
+      "darwin-arm64",
+      "linux-x64"
+    ],
+    "codex_home": "~/.codex"
+  },
+  "packages": [
+    {
+      "id": "io.github.harzva.agentworkos.inventory",
+      "type": "skill",
+      "source": ".",
+      "path": "skills/agentworkos-inventory",
+      "install_to": "skills/agentworkos-inventory",
+      "ref": "main",
+      "resolved_path": ".",
+      "source_kind": "directory",
+      "content_hash": "798862b8a91a541a6a4fc2a889003009c740666b9a0abe2ab58928344e0cbcf2"
+    },
+    {
+      "id": "io.github.harzva.agentworkos.terms",
+      "type": "terms",
+      "source": "./TERMS.md",
+      "path": "",
+      "install_to": "agents/TERMS.md",
+      "ref": "main",
+      "resolved_path": "./TERMS.md",
+      "content_hash": "151e42a80792416f7d37204a26c07d01df97dbe6f92610504d38bdaaed005e46",
+      "source_kind": "file"
+    }
+  ],
+  "repos": [
+    {
+      "id": "io.github.harzva.agentworkos",
+      "source": "https://github.com/Harzva/AgentWorkOS.git",
+      "checkout_to": "repos/AgentWorkOS",
+      "ref": "main"
+    }
+  ]
+}

@@ -1,0 +1,57 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://agentworkos.dev/schemas/agentworkos.schema.json",
+  "title": "AgentWorkOS Stack Manifest",
+  "type": "object",
+  "required": ["stack"],
+  "properties": {
+    "stack": {
+      "type": "object",
+      "required": ["name", "version"],
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "version": { "type": "string" },
+        "platforms": { "type": "array", "items": { "type": "string" } },
+        "codex_home": { "type": "string" }
+      },
+      "additionalProperties": true
+    },
+    "packages": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/packageRef" }
+    },
+    "repos": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/repoRef" }
+    }
+  },
+  "$defs": {
+    "packageRef": {
+      "type": "object",
+      "required": ["id", "type", "source", "install_to"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "type": {
+          "enum": ["skill", "agent", "rule", "terms", "prompt", "sop", "hook", "mcp", "repo"]
+        },
+        "source": { "type": "string", "minLength": 1 },
+        "path": { "type": "string" },
+        "install_to": { "type": "string" },
+        "ref": { "type": "string" }
+      },
+      "additionalProperties": true
+    },
+    "repoRef": {
+      "type": "object",
+      "required": ["id", "source", "checkout_to"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "source": { "type": "string", "minLength": 1 },
+        "checkout_to": { "type": "string", "minLength": 1 },
+        "ref": { "type": "string" }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}

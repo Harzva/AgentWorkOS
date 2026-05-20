@@ -1,0 +1,24 @@
+[stack]
+name = "agentworkos-self"
+version = "0.1.0"
+platforms = ["windows-x64", "darwin-arm64", "linux-x64"]
+codex_home = "~/.codex"
+
+[[packages]]
+id = "io.github.harzva.agentworkos.inventory"
+type = "skill"
+source = "."
+path = "skills/agentworkos-inventory"
+install_to = "skills/agentworkos-inventory"
+
+[[packages]]
+id = "io.github.harzva.agentworkos.terms"
+type = "terms"
+source = "./TERMS.md"
+install_to = "agents/TERMS.md"
+
+[[repos]]
+id = "io.github.harzva.agentworkos"
+source = "https://github.com/Harzva/AgentWorkOS.git"
+checkout_to = "repos/AgentWorkOS"
+ref = "main"

@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">AgentWorkOS logo</title>
+  <desc id="desc">A compact mark showing agent packages arranged around a locked workspace core.</desc>
+  <defs>
+    <linearGradient id="core" x1="96" y1="96" x2="416" y2="416" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#0f766e"/>
+      <stop offset="0.52" stop-color="#2563eb"/>
+      <stop offset="1" stop-color="#7c3aed"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="18" stdDeviation="22" flood-color="#020617" flood-opacity="0.22"/>
+    </filter>
+  </defs>
+  <rect x="52" y="52" width="408" height="408" rx="92" fill="#f8fafc"/>
+  <circle cx="256" cy="256" r="154" fill="#0f172a" filter="url(#shadow)"/>
+  <path d="M256 122l114 66v132l-114 66-114-66V188z" fill="url(#core)"/>
+  <path d="M256 122v132l114-66M256 254l-114-66M256 254v132" fill="none" stroke="#e0f2fe" stroke-width="13" stroke-linecap="round" stroke-linejoin="round" opacity="0.86"/>
+  <g fill="#ffffff" stroke="#0f172a" stroke-width="9">
+    <rect x="95" y="204" width="78" height="78" rx="22"/>
+    <rect x="339" y="204" width="78" height="78" rx="22"/>
+    <rect x="217" y="74" width="78" height="78" rx="22"/>
+    <rect x="217" y="360" width="78" height="78" rx="22"/>
+  </g>
+  <g fill="#0f172a">
+    <circle cx="134" cy="243" r="12"/>
+    <path d="M377 230h-18v-18h-18v18h-18v18h18v18h18v-18h18z"/>
+    <path d="M238 113h36v14h-36zM238 92h36v14h-36z"/>
+    <path d="M236 402l16 16 28-36" fill="none" stroke="#0f172a" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+</svg>

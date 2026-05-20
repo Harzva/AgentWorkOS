@@ -1,0 +1,33 @@
+[stack]
+name = "harzva-default"
+version = "0.1.0"
+platforms = ["windows-x64"]
+codex_home = "~/.codex"
+
+[[packages]]
+id = "io.github.just-agent.readme-design"
+type = "skill"
+source = "git+https://github.com/Just-Agent/README-Design-Skill.git"
+path = "skills/readme-design"
+install_to = "skills/readme-design"
+ref = "main"
+
+[[packages]]
+id = "io.github.harzva.make-windows-silky"
+type = "skill"
+source = "git+https://github.com/Harzva/make_windows_silky_Patch.git"
+path = "patches/skills/make-windows-silky"
+install_to = "skills/make-windows-silky"
+ref = "main"
+
+[[packages]]
+id = "local.terms"
+type = "terms"
+source = "./TERMS.md"
+install_to = "agents/TERMS.md"
+
+[[repos]]
+id = "io.github.harzva.make-windows-silky"
+source = "https://github.com/Harzva/make_windows_silky_Patch.git"
+checkout_to = "repos/make_windows_silky_Patch"
+ref = "main"

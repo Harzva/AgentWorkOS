@@ -1,0 +1,21 @@
+[package]
+id = "io.github.harzva.agentworkos"
+name = "AgentWorkOS"
+type = "repo"
+version = "0.1.0"
+description = "Package-managed operating layer for AI agent workspaces."
+license = "MIT"
+
+[source]
+repo = "https://github.com/Harzva/AgentWorkOS.git"
+path = "."
+
+[install]
+target = "repos/AgentWorkOS"
+
+[verify]
+entrypoint = "pyproject.toml"
+commands = [
+  "python -m pytest -q",
+  "awos doctor --manifest agentworkos.toml"
+]
