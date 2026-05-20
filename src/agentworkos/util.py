@@ -55,6 +55,13 @@ def default_claude_home() -> Path:
     return Path.home() / ".claude"
 
 
+def default_aw_home() -> Path:
+    env = os.environ.get("AW_HOME")
+    if env:
+        return Path(env).expanduser()
+    return Path.home() / ".agentworkos"
+
+
 def json_dump(path: Path, payload: Any) -> None:
     path.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 

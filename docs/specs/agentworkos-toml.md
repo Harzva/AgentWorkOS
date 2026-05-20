@@ -21,7 +21,7 @@ claude_home = "~/.claude"
 [[packages]]
 id = "io.github.just-agent.readme-design"
 type = "skill"
-source = "git+https://github.com/Just-Agent/README-Design-Skill.git"
+source = "github:Just-Agent/README-Design-Skill"
 path = "skills/readme-design"
 install_to = "skills/readme-design"
 ref = "main"
@@ -42,7 +42,7 @@ Fields:
 | --- | --- | --- |
 | `id` | yes | Stable package identity |
 | `type` | yes | `skill`, `agent`, `rule`, `terms`, `prompt`, `sop`, `hook`, `mcp`, or `repo` |
-| `source` | yes | `git+https://...`, `https://...`, or local relative path |
+| `source` | yes | `github:OWNER/REPO`, `git+https://...`, `https://...`, or local relative path |
 | `path` | no | Subdirectory inside the source |
 | `install_to` | yes for runtime packages | Relative path under the runtime home |
 | `ref` | no | Branch, tag, or revision, default `main` |
@@ -66,6 +66,16 @@ adapter = "skill-to-claude-skill"
 ```
 
 The canonical package stays the same. The target adapter decides where and how it is installed.
+
+## Remote Sources
+
+Remote package sources are cached under `AW_HOME`, defaulting to `~/.agentworkos`:
+
+```text
+~/.agentworkos/sources/github.com/OWNER/REPO
+```
+
+`aw sync --apply` clones or fetches remote sources before installing them into the selected runtime target. Without `--apply`, it prints the planned clone/fetch and copy actions.
 
 ## Repositories
 

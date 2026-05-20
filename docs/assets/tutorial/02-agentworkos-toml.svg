@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 320" role="img" aria-labelledby="title desc">
+  <title id="title">Step 02 agentworkos.toml</title>
+  <desc id="desc">Declare package sources and runtime targets in agentworkos.toml.</desc>
+  <rect width="960" height="320" rx="28" fill="#f8fafc"/>
+  <g font-family="Segoe UI, Arial, sans-serif">
+    <text x="56" y="72" fill="#0f172a" font-size="34" font-weight="700">02 Declare Packages</text>
+    <text x="56" y="112" fill="#475569" font-size="18">agentworkos.toml works like requirements.txt for agent knowledge.</text>
+    <rect x="56" y="148" width="270" height="116" rx="16" fill="#ffffff" stroke="#cbd5e1" stroke-width="3"/>
+    <text x="88" y="188" fill="#0f766e" font-size="20" font-weight="700">[[packages]]</text>
+    <text x="88" y="220" fill="#334155" font-size="16">source = github:OWNER/REPO</text>
+    <text x="88" y="246" fill="#334155" font-size="16">type = skill</text>
+    <rect x="382" y="148" width="238" height="116" rx="16" fill="#ecfeff" stroke="#0f766e" stroke-width="3"/>
+    <text x="501" y="190" text-anchor="middle" fill="#0f172a" font-size="22" font-weight="700">Codex Target</text>
+    <text x="501" y="224" text-anchor="middle" fill="#334155" font-size="15">.codex/skills</text>
+    <rect x="676" y="148" width="238" height="116" rx="16" fill="#eef2ff" stroke="#4f46e5" stroke-width="3"/>
+    <text x="795" y="190" text-anchor="middle" fill="#0f172a" font-size="22" font-weight="700">Claude Target</text>
+    <text x="795" y="224" text-anchor="middle" fill="#334155" font-size="15">.claude/skills</text>
+    <path d="M336 206h36M630 206h36" stroke="#2563eb" stroke-width="8" stroke-linecap="round"/>
+  </g>
+</svg>

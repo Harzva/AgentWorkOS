@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 320" role="img" aria-labelledby="title desc">
+  <title id="title">Step 05 runtime sync</title>
+  <desc id="desc">Verify Codex and Claude Code runtime copies after sync.</desc>
+  <rect width="960" height="320" rx="28" fill="#f8fafc"/>
+  <g font-family="Segoe UI, Arial, sans-serif">
+    <text x="56" y="72" fill="#0f172a" font-size="34" font-weight="700">05 Verify Runtime Sync</text>
+    <text x="56" y="112" fill="#475569" font-size="18">After apply, scan and doctor prove the runtime matches the declared stack.</text>
+    <rect x="56" y="152" width="236" height="104" rx="16" fill="#ecfeff" stroke="#0f766e" stroke-width="3"/>
+    <text x="174" y="194" text-anchor="middle" fill="#0f172a" font-size="22" font-weight="700">Codex</text>
+    <text x="174" y="226" text-anchor="middle" fill="#334155" font-size="15">.codex runtime</text>
+    <rect x="362" y="152" width="236" height="104" rx="16" fill="#eef2ff" stroke="#4f46e5" stroke-width="3"/>
+    <text x="480" y="194" text-anchor="middle" fill="#0f172a" font-size="22" font-weight="700">Claude Code</text>
+    <text x="480" y="226" text-anchor="middle" fill="#334155" font-size="15">.claude runtime</text>
+    <rect x="668" y="152" width="236" height="104" rx="16" fill="#fefce8" stroke="#ca8a04" stroke-width="3"/>
+    <text x="786" y="194" text-anchor="middle" fill="#0f172a" font-size="22" font-weight="700">aw scan</text>
+    <text x="786" y="226" text-anchor="middle" fill="#334155" font-size="15">evidence report</text>
+    <path d="M302 204h50M608 204h50" stroke="#2563eb" stroke-width="8" stroke-linecap="round"/>
+  </g>
+</svg>

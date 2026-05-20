@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 320" role="img" aria-labelledby="title desc">
+  <title id="title">Step 03 lock and push</title>
+  <desc id="desc">Lock the stack and push the reproducible knowledge state to GitHub.</desc>
+  <rect width="960" height="320" rx="28" fill="#f8fafc"/>
+  <g font-family="Segoe UI, Arial, sans-serif">
+    <text x="56" y="72" fill="#0f172a" font-size="34" font-weight="700">03 Lock and Push</text>
+    <text x="56" y="112" fill="#475569" font-size="18">Commit the manifest and lockfile so another machine can restore the same stack.</text>
+    <rect x="56" y="152" width="236" height="104" rx="16" fill="#fefce8" stroke="#ca8a04" stroke-width="3"/>
+    <text x="174" y="194" text-anchor="middle" fill="#0f172a" font-size="22" font-weight="700">aw lock</text>
+    <text x="174" y="226" text-anchor="middle" fill="#334155" font-size="15">hashes + refs</text>
+    <rect x="362" y="152" width="236" height="104" rx="16" fill="#ecfeff" stroke="#0f766e" stroke-width="3"/>
+    <text x="480" y="194" text-anchor="middle" fill="#0f172a" font-size="22" font-weight="700">git commit</text>
+    <text x="480" y="226" text-anchor="middle" fill="#334155" font-size="15">manifest + lock</text>
+    <rect x="668" y="152" width="236" height="104" rx="16" fill="#e0f2fe" stroke="#0284c7" stroke-width="3"/>
+    <text x="786" y="194" text-anchor="middle" fill="#0f172a" font-size="22" font-weight="700">git push</text>
+    <text x="786" y="226" text-anchor="middle" fill="#334155" font-size="15">GitHub source</text>
+    <path d="M302 204h50M608 204h50" stroke="#2563eb" stroke-width="8" stroke-linecap="round"/>
+  </g>
+</svg>

@@ -4,6 +4,7 @@ from pathlib import Path
 from typing import Any
 
 from .manifest import load_toml
+from .remote import is_remote_source, resolve_remote_source
 from .util import git_commit, git_remote, is_git_repo, json_dump, run_git, sha256_file, sha256_tree
 
 
@@ -12,7 +13,7 @@ def normalize_git_source(source: str) -> str:
 
 
 def resolve_git_remote(source: str, ref: str) -> str:
-    remote = normalize_git_source(source)
+    remote = resolve_remote_source(source).url if is_remote_source(source) else normalize_git_source(source)
     output = run_git(["ls-remote", remote, ref])
     first = output.splitlines()[0] if output else ""
     return first.split()[0] if first else ""
@@ -48,7 +49,7 @@ def create_lock(manifest_path: Path, offline: bool = False) -> dict[str, Any]:
             "targets": package.get("targets", []),
             "ref": ref,
         }
-        if source.startswith("git+") or source.startswith("https://"):
+        if is_remote_source(source):
             entry["source_kind"] = "git-remote"
             if not offline:
                 try:

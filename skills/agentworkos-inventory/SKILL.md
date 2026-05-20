@@ -12,7 +12,7 @@ Use this skill to turn a local AI agent workspace into a package-managed environ
 1. Scan the runtime.
 
    ```powershell
-   aw scan --codex-home "$env:USERPROFILE\.codex" --workspace .
+   aw scan --codex-home "$env:USERPROFILE\.codex" --claude-home "$env:USERPROFILE\.claude" --workspace .
    ```
 
 2. Inspect `AGENTWORKOS_AUDIT.md`.
@@ -35,7 +35,15 @@ Use this skill to turn a local AI agent workspace into a package-managed environ
 
    ```powershell
    aw sync
+   aw sync --target all
    aw sync --apply
+   ```
+
+7. Restore from GitHub when the stack already exists remotely.
+
+   ```powershell
+   aw install github:OWNER/AgentWorkOS-Stack --target all
+   aw install github:OWNER/AgentWorkOS-Stack --target all --apply
    ```
 
 ## Three-End Sync

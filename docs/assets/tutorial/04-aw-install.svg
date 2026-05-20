@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 320" role="img" aria-labelledby="title desc">
+  <title id="title">Step 04 aw install</title>
+  <desc id="desc">Install an AgentWorkOS stack from GitHub with aw install.</desc>
+  <rect width="960" height="320" rx="28" fill="#f8fafc"/>
+  <g font-family="Segoe UI, Arial, sans-serif">
+    <text x="56" y="72" fill="#0f172a" font-size="34" font-weight="700">04 Install on New Machine</text>
+    <text x="56" y="112" fill="#475569" font-size="18">aw install reads the GitHub stack, caches sources, and prepares runtime sync.</text>
+    <rect x="56" y="152" width="266" height="104" rx="16" fill="#e0f2fe" stroke="#0284c7" stroke-width="3"/>
+    <text x="189" y="194" text-anchor="middle" fill="#0f172a" font-size="22" font-weight="700">github:OWNER/REPO</text>
+    <text x="189" y="226" text-anchor="middle" fill="#334155" font-size="15">stack or package</text>
+    <rect x="368" y="152" width="224" height="104" rx="16" fill="#f5f3ff" stroke="#7c3aed" stroke-width="3"/>
+    <text x="480" y="194" text-anchor="middle" fill="#0f172a" font-size="22" font-weight="700">aw install</text>
+    <text x="480" y="226" text-anchor="middle" fill="#334155" font-size="15">dry-run first</text>
+    <rect x="638" y="152" width="266" height="104" rx="16" fill="#ecfeff" stroke="#0f766e" stroke-width="3"/>
+    <text x="771" y="194" text-anchor="middle" fill="#0f172a" font-size="22" font-weight="700">AW_HOME cache</text>
+    <text x="771" y="226" text-anchor="middle" fill="#334155" font-size="15">sources/github.com</text>
+    <path d="M332 204h26M602 204h26" stroke="#2563eb" stroke-width="8" stroke-linecap="round"/>
+  </g>
+</svg>

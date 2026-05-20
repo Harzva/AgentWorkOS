@@ -4,6 +4,7 @@ from pathlib import Path
 from typing import Any
 
 from .manifest import load_toml
+from .remote import is_remote_source, resolve_remote_source
 
 
 def run_doctor(manifest_path: Path) -> dict[str, Any]:
@@ -21,7 +22,12 @@ def run_doctor(manifest_path: Path) -> dict[str, Any]:
         seen.add(package_id)
 
         source = package.get("source", "")
-        if source and not source.startswith(("git+", "https://")):
+        if source and is_remote_source(source):
+            try:
+                resolve_remote_source(source)
+            except ValueError as exc:
+                findings.append({"severity": "warning", "message": f"invalid remote source for {package_id}: {exc}"})
+        elif source:
             if not (base / source).exists():
                 findings.append({"severity": "warning", "message": f"local source missing for {package_id}: {source}"})
 

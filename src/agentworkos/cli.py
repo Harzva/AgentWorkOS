@@ -5,6 +5,7 @@ import sys
 from pathlib import Path
 
 from .doctor import render_doctor, run_doctor
+from .install import install_source
 from .lockfile import write_lock
 from .manifest import write_sample_stack, write_sample_terms
 from .scan import render_audit, scan_environment
@@ -71,11 +72,31 @@ def cmd_doctor(args: argparse.Namespace) -> int:
 
 
 def cmd_sync(args: argparse.Namespace) -> int:
-    report = sync_manifest(Path(args.manifest), apply=args.apply, target=args.target)
+    report = sync_manifest(
+        Path(args.manifest),
+        apply=args.apply,
+        target=args.target,
+        aw_home=Path(args.aw_home).expanduser() if args.aw_home else None,
+    )
     for action in report["actions"]:
         print(action)
     if not args.apply:
         print("dry-run only; pass --apply to write runtime files")
+    return 0
+
+
+def cmd_install(args: argparse.Namespace) -> int:
+    report = install_source(
+        args.source,
+        ref=args.ref,
+        target=args.target,
+        apply=args.apply,
+        aw_home=Path(args.aw_home).expanduser() if args.aw_home else None,
+    )
+    for action in report["actions"]:
+        print(action)
+    if not args.apply:
+        print("dry-run only; pass --apply to write cache and runtime files")
     return 0
 
 
@@ -117,9 +138,18 @@ def build_parser() -> argparse.ArgumentParser:
 
     sync = sub.add_parser("sync", help="sync local packages into runtime; dry-run by default")
     sync.add_argument("--manifest", default="agentworkos.toml")
-    sync.add_argument("--target", choices=["codex", "claude", "claude-code"], default="codex")
+    sync.add_argument("--target", choices=["codex", "claude", "claude-code", "all"], default="codex")
+    sync.add_argument("--aw-home", default="")
     sync.add_argument("--apply", action="store_true")
     sync.set_defaults(func=cmd_sync)
+
+    install = sub.add_parser("install", help="install an AgentWorkOS stack or package from GitHub")
+    install.add_argument("source")
+    install.add_argument("--ref", default="main")
+    install.add_argument("--target", choices=["codex", "claude", "claude-code", "all"], default="codex")
+    install.add_argument("--aw-home", default="")
+    install.add_argument("--apply", action="store_true")
+    install.set_defaults(func=cmd_install)
 
     explain_parser = sub.add_parser("explain", help="explain a local shorthand term")
     explain_parser.add_argument("term")

@@ -34,8 +34,8 @@
       "resolved_path": ".",
       "source_kind": "git-local",
       "remote": "https://github.com/Harzva/AgentWorkOS.git",
-      "commit": "caff63ffabe43c4ce78a6f36b0acc8ebe0070d51",
-      "content_hash": "225a5d0ccac6f86323a02d17b8903b546ecef2027fed2ffa50c2ff915d565306"
+      "commit": "6e85b43967e3c7cf5756549256014ab38e1d75cb",
+      "content_hash": "3e8126190aef3d44afe900fab45bf0f5db0dd83aacde2452c5b70d64c6349178"
     },
     {
       "id": "io.github.harzva.agentworkos.terms",

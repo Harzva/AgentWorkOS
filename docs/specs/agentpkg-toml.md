@@ -14,7 +14,7 @@ description = "Design and polish GitHub README homepages."
 license = "MIT"
 
 [source]
-repo = "https://github.com/Just-Agent/README-Design-Skill.git"
+repo = "github:Just-Agent/README-Design-Skill"
 path = "skills/readme-design"
 
 [install]
@@ -63,3 +63,13 @@ Every package should have:
 `targets` are optional runtime projections. They let one canonical package declare different install paths for Codex, Claude Code, and future agent runtimes.
 
 AgentWorkOS should not pretend all runtimes are identical. It should preserve one canonical source and adapt it carefully.
+
+## Installing From GitHub
+
+A repository with `agentpkg.toml` can be installed directly:
+
+```powershell
+aw install github:OWNER/REPO --target codex --apply
+```
+
+AgentWorkOS reads `[source].path`, `[install].target`, and optional `[[targets]]` entries, then projects the package into the requested runtime.

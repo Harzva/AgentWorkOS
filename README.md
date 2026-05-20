@@ -7,6 +7,8 @@
     Sync them into Codex, Claude Code, and future agent runtimes with explicit target adapters.
   </p>
   <p>
+    <a href="https://harzva.github.io/AgentWorkOS/">Docs Site</a>
+    ·
     <a href="./docs/specs/agentworkos-toml.md">Stack Spec</a>
     ·
     <a href="./docs/specs/agentpkg-toml.md">Package Spec</a>
@@ -21,6 +23,7 @@
     <img alt="CLI" src="https://img.shields.io/badge/cli-aw-2563eb" />
     <img alt="Status" src="https://img.shields.io/badge/status-alpha-f59e0b" />
     <img alt="Python" src="https://img.shields.io/badge/python-3.11%2B-0f766e" />
+    <img alt="Docs" src="https://img.shields.io/badge/docs-GitHub%20Pages-0f766e" />
     <img alt="License" src="https://img.shields.io/badge/license-MIT-111827" />
   </p>
 </div>
@@ -43,25 +46,57 @@ AI agent workspaces are becoming real development environments, but their contex
 | Explain local shorthand | `aw explain 三端同步` expands team-specific terms from `TERMS.md` |
 | Support multiple agents | runtime-specific `targets` map one package to Codex, Claude Code, or future adapters |
 
+## Supported Runtimes
+
+| Runtime | Status | Skills | Agents / Subagents | Rules / Memory | Commands / Prompts | Terms | MCP |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| Codex | ✅ supported | ✅ | ✅ | ✅ | adapter | ✅ | adapter |
+| Claude Code | ✅ supported | ✅ | ✅ | ✅ | ✅ | ✅ | adapter |
+| Cursor | 🚧 planned | 🚧 | 🚧 | 🚧 | 🚧 | 🚧 | 🚧 |
+| Windsurf | 🚧 planned | 🚧 | 🚧 | 🚧 | 🚧 | 🚧 | 🚧 |
+| Gemini CLI | 🚧 planned | 🚧 | 🚧 | 🚧 | 🚧 | 🚧 | 🚧 |
+| OpenCode | 🚧 planned | 🚧 | 🚧 | 🚧 | 🚧 | 🚧 | 🚧 |
+
+Only Codex and Claude Code are marked supported in the first adapter set. See [Supported Runtimes](./docs/runtimes.md) for the full matrix.
+
 ## 30-Second Start
 
 ```powershell
 python -m pip install -e .
-aw init --root .
-aw scan --codex-home "$env:USERPROFILE\.codex" --claude-home "$env:USERPROFILE\.claude" --workspace .
-aw lock --offline
+aw install github:Harzva/AgentWorkOS --target all
+aw scan --workspace .
 aw doctor
-aw sync
 ```
 
-`sync` is dry-run by default. Apply only after the plan looks right:
+`install` and `sync` are dry-run by default. Apply only after the plan looks right:
 
 ```powershell
-aw sync --apply
-aw sync --target claude-code --apply
+aw install github:Harzva/AgentWorkOS --target all --apply
 ```
 
 `awos` remains available as a backward-compatible alias, but new docs and scripts use `aw`.
+
+## GitHub Knowledge Model
+
+AgentWorkOS treats GitHub as the knowledge source for your agent workspace:
+
+| Layer | AgentWorkOS file or command | Similar idea |
+| --- | --- | --- |
+| Stack repo | `AgentWorkOS-Stack` on GitHub | project environment repo |
+| Manifest | `agentworkos.toml` | `requirements.txt`, `environment.yml` |
+| Lockfile | `agentworkos.lock.json` | `uv.lock`, `flake.lock` |
+| Install | `aw install github:OWNER/REPO` | `pip install git+...` |
+| Runtime projection | `aw sync --target all` | installed environment |
+
+Recommended restore flow on a new machine:
+
+```powershell
+aw install github:OWNER/AgentWorkOS-Stack --target all --apply
+aw scan
+aw doctor
+```
+
+Read the step-by-step tutorial in [GitHub Knowledge Management](./docs/github-knowledge.md) or the [GitHub Pages docs site](https://harzva.github.io/AgentWorkOS/).
 
 ## Runtime Targets
 
@@ -112,6 +147,7 @@ See [Agent Runtime Targets](./docs/agent-targets.md) for the adapter matrix and 
 | `aw sync` | Dry-run package installation into runtime paths |
 | `aw sync --target claude-code` | Project packages into the Claude Code runtime |
 | `aw sync --apply` | Apply local package sync |
+| `aw install github:OWNER/REPO` | Install a Stack Repo or Package Repo from GitHub |
 | `aw doctor` | Check manifest health and common drift |
 | `aw explain 三端同步` | Expand a shorthand term from `TERMS.md` |
 
@@ -136,6 +172,7 @@ AgentWorkOS/
 ├─ src/agentworkos/       # aw CLI implementation
 ├─ schemas/               # JSON schemas for stack, lock, and packages
 ├─ docs/specs/            # human-readable specs
+├─ docs/assets/tutorial/  # README and Pages tutorial images
 ├─ docs/agent-targets.md  # Codex / Claude Code adapter model
 ├─ examples/              # sample AgentWorkOS stack
 ├─ skills/                # installable AgentWorkOS skills

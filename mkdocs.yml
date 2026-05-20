@@ -1,0 +1,64 @@
+site_name: AgentWorkOS
+site_description: Package manager for portable AI agent workspaces
+site_url: https://harzva.github.io/AgentWorkOS/
+repo_url: https://github.com/Harzva/AgentWorkOS
+repo_name: Harzva/AgentWorkOS
+
+theme:
+  name: material
+  language: zh
+  logo: readme-assets/logo.svg
+  favicon: readme-assets/logo.svg
+  features:
+    - navigation.sections
+    - navigation.expand
+    - navigation.top
+    - navigation.indexes
+    - toc.follow
+    - search.highlight
+    - search.suggest
+    - content.code.copy
+  palette:
+    - scheme: default
+      primary: indigo
+      accent: teal
+      toggle:
+        icon: material/weather-night
+        name: 切换到暗色
+    - scheme: slate
+      primary: indigo
+      accent: teal
+      toggle:
+        icon: material/weather-sunny
+        name: 切换到亮色
+
+nav:
+  - 欢迎: index.md
+  - 开始干活:
+      - 快速上手: getting-started.md
+      - GitHub 知识管理: github-knowledge.md
+  - 参考:
+      - 支持的智能体: runtimes.md
+      - CLI: cli.md
+      - Runtime Targets: agent-targets.md
+      - Stack Spec: specs/agentworkos-toml.md
+      - Package Spec: specs/agentpkg-toml.md
+      - Lockfile Spec: specs/agentworkos-lock.md
+      - 设计来源: inspirations.md
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - md_in_html
+  - tables
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.tasklist:
+      custom_checkbox: true
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/Harzva/AgentWorkOS
