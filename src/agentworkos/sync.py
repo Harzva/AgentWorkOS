@@ -3,9 +3,9 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Any
 
-from .manifest import load_toml
+from .manifest import load_toml, resolve_profile
 from .remote import clone_or_fetch, is_remote_source, remote_cache_path, resolve_remote_source
-from .util import copy_file, copy_tree, default_claude_home, default_codex_home
+from .util import copy_file, copy_tree, default_aw_home, default_claude_home, default_codex_home
 
 
 def runtime_home(stack: dict[str, Any], target: str) -> Path:
@@ -67,9 +67,13 @@ def sync_manifest_data(
     apply: bool = False,
     target: str = "codex",
     aw_home: Path | None = None,
+    profile: str | None = None,
 ) -> dict[str, Any]:
+    manifest = resolve_profile(manifest, profile)
+    selected_profile = manifest.get("_selected_profile", profile)
     stack = manifest.get("stack", {})
     actions: list[str] = []
+    aw_root = (aw_home or default_aw_home()).expanduser()
 
     for selected_target in target_names(target):
         home = runtime_home(stack, selected_target)
@@ -92,7 +96,24 @@ def sync_manifest_data(
             else:
                 actions.append(f"missing source: {source_path}")
 
-    return {"schema": "agentworkos.sync.v1", "apply": apply, "target": target, "actions": actions}
+    for repo in manifest.get("repos", []):
+        repo_id = repo.get("id", "<unknown>")
+        source = repo.get("source", "")
+        checkout_to = repo.get("checkout_to", "")
+        ref = repo.get("ref", "main")
+        if not source or not checkout_to:
+            actions.append(f"skip repo {repo_id}: missing source or checkout_to")
+            continue
+        if not is_remote_source(source):
+            actions.append(f"skip repo {repo_id}: unsupported non-remote source {source}")
+            continue
+        remote = resolve_remote_source(source)
+        checkout = Path(checkout_to).expanduser()
+        if not checkout.is_absolute():
+            checkout = aw_root / checkout
+        actions.extend(clone_or_fetch(remote, checkout, ref, apply=apply))
+
+    return {"schema": "agentworkos.sync.v1", "apply": apply, "target": target, "profile": selected_profile, "actions": actions}
 
 
 def sync_manifest(
@@ -100,6 +121,7 @@ def sync_manifest(
     apply: bool = False,
     target: str = "codex",
     aw_home: Path | None = None,
+    profile: str | None = None,
 ) -> dict[str, Any]:
     manifest = load_toml(manifest_path)
-    return sync_manifest_data(manifest, manifest_path.parent, apply=apply, target=target, aw_home=aw_home)
+    return sync_manifest_data(manifest, manifest_path.parent, apply=apply, target=target, aw_home=aw_home, profile=profile)

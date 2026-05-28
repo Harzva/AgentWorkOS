@@ -81,6 +81,7 @@ def create_lock(manifest_path: Path, offline: bool = False) -> dict[str, Any]:
         "schema": "agentworkos.lock.v1",
         "manifest": str(manifest_path),
         "stack": manifest.get("stack", {}),
+        "profiles": manifest.get("profiles", []),
         "packages": entries,
         "repos": repo_entries,
     }

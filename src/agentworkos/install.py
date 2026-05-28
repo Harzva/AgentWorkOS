@@ -45,6 +45,7 @@ def install_source(
     target: str = "codex",
     apply: bool = False,
     aw_home: Path | None = None,
+    profile: str | None = None,
 ) -> dict[str, Any]:
     remote = resolve_remote_source(source)
     cache = remote_cache_path(remote, aw_home)
@@ -55,7 +56,7 @@ def install_source(
         actions.extend(inspect_actions)
         kind, manifest, base = detect_install_manifest(repo_root)
         actions.append(f"detected {kind} repo: {remote.display}")
-        sync = sync_manifest_data(manifest, base, apply=apply, target=target, aw_home=aw_home)
+        sync = sync_manifest_data(manifest, base, apply=apply, target=target, aw_home=aw_home, profile=profile)
         actions.extend(sync["actions"])
 
     return {
@@ -63,6 +64,7 @@ def install_source(
         "source": source,
         "ref": ref,
         "target": target,
+        "profile": sync.get("profile", profile),
         "apply": apply,
         "actions": actions,
     }

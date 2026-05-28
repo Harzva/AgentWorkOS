@@ -66,7 +66,7 @@ def cmd_lock(args: argparse.Namespace) -> int:
 
 
 def cmd_doctor(args: argparse.Namespace) -> int:
-    report = run_doctor(Path(args.manifest))
+    report = run_doctor(Path(args.manifest), profile=args.profile or None)
     print(render_doctor(report), end="")
     return 0 if report["ok"] else 1
 
@@ -77,6 +77,7 @@ def cmd_sync(args: argparse.Namespace) -> int:
         apply=args.apply,
         target=args.target,
         aw_home=Path(args.aw_home).expanduser() if args.aw_home else None,
+        profile=args.profile or None,
     )
     for action in report["actions"]:
         print(action)
@@ -92,6 +93,7 @@ def cmd_install(args: argparse.Namespace) -> int:
         target=args.target,
         apply=args.apply,
         aw_home=Path(args.aw_home).expanduser() if args.aw_home else None,
+        profile=args.profile or None,
     )
     for action in report["actions"]:
         print(action)
@@ -134,11 +136,13 @@ def build_parser() -> argparse.ArgumentParser:
 
     doctor = sub.add_parser("doctor", help="check manifest health")
     doctor.add_argument("--manifest", default="agentworkos.toml")
+    doctor.add_argument("--profile", default="")
     doctor.set_defaults(func=cmd_doctor)
 
     sync = sub.add_parser("sync", help="sync local packages into runtime; dry-run by default")
     sync.add_argument("--manifest", default="agentworkos.toml")
     sync.add_argument("--target", choices=["codex", "claude", "claude-code", "all"], default="codex")
+    sync.add_argument("--profile", default="")
     sync.add_argument("--aw-home", default="")
     sync.add_argument("--apply", action="store_true")
     sync.set_defaults(func=cmd_sync)
@@ -147,6 +151,7 @@ def build_parser() -> argparse.ArgumentParser:
     install.add_argument("source")
     install.add_argument("--ref", default="main")
     install.add_argument("--target", choices=["codex", "claude", "claude-code", "all"], default="codex")
+    install.add_argument("--profile", default="")
     install.add_argument("--aw-home", default="")
     install.add_argument("--apply", action="store_true")
     install.set_defaults(func=cmd_install)

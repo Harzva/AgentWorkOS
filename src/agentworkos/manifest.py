@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import tomllib
+from copy import deepcopy
 from pathlib import Path
 from typing import Any
 
@@ -8,6 +9,82 @@ from typing import Any
 def load_toml(path: Path) -> dict[str, Any]:
     with path.open("rb") as handle:
         return tomllib.load(handle)
+
+
+def _as_list(value: Any) -> list[Any]:
+    if value is None:
+        return []
+    if isinstance(value, list):
+        return value
+    return [value]
+
+
+def profile_map(manifest: dict[str, Any]) -> dict[str, dict[str, Any]]:
+    profiles: dict[str, dict[str, Any]] = {}
+    for profile in manifest.get("profiles", []):
+        name = profile.get("name", "")
+        if name:
+            profiles[name] = profile
+    return profiles
+
+
+def resolve_profile(manifest: dict[str, Any], profile_name: str | None) -> dict[str, Any]:
+    if not profile_name:
+        profile_name = manifest.get("stack", {}).get("default_profile", "")
+        if not profile_name:
+            return manifest
+
+    profiles = profile_map(manifest)
+    if profile_name not in profiles:
+        raise ValueError(f"unknown profile: {profile_name}")
+
+    package_ids: list[str] = []
+    repo_ids: list[str] = []
+    visited: set[str] = set()
+
+    def visit(name: str, stack: list[str]) -> None:
+        if name in stack:
+            cycle = " -> ".join([*stack, name])
+            raise ValueError(f"profile inheritance cycle: {cycle}")
+        if name in visited:
+            return
+        if name not in profiles:
+            raise ValueError(f"unknown profile in extends: {name}")
+        profile = profiles[name]
+        for parent in _as_list(profile.get("extends")):
+            visit(str(parent), [*stack, name])
+        package_ids.extend(str(item) for item in _as_list(profile.get("packages")))
+        repo_ids.extend(str(item) for item in _as_list(profile.get("repos")))
+        visited.add(name)
+
+    visit(profile_name, [])
+
+    selected = deepcopy(manifest)
+    all_packages = manifest.get("packages", [])
+    all_repos = manifest.get("repos", [])
+
+    if package_ids and "*" not in package_ids:
+        available = {package.get("id") for package in all_packages}
+        missing = [package_id for package_id in dict.fromkeys(package_ids) if package_id not in available]
+        if missing:
+            raise ValueError(f"profile {profile_name} references missing package ids: {', '.join(missing)}")
+        allowed = set(package_ids)
+        selected["packages"] = [package for package in all_packages if package.get("id") in allowed]
+    elif profile_name and not package_ids:
+        selected["packages"] = []
+
+    if repo_ids and "*" not in repo_ids:
+        available = {repo.get("id") for repo in all_repos}
+        missing = [repo_id for repo_id in dict.fromkeys(repo_ids) if repo_id not in available]
+        if missing:
+            raise ValueError(f"profile {profile_name} references missing repo ids: {', '.join(missing)}")
+        allowed = set(repo_ids)
+        selected["repos"] = [repo for repo in all_repos if repo.get("id") in allowed]
+    elif profile_name and not repo_ids:
+        selected["repos"] = []
+
+    selected["_selected_profile"] = profile_name
+    return selected
 
 
 def quote_toml(value: str) -> str:

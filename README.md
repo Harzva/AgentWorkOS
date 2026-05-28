@@ -76,6 +76,20 @@ aw install github:Harzva/AgentWorkOS --target all --apply
 
 `awos` remains available as a backward-compatible alias, but new docs and scripts use `aw`.
 
+For this repository itself, use the bundled installer:
+
+```powershell
+pwsh -ExecutionPolicy Bypass -File .\install.ps1 -Profile codex -Target codex
+pwsh -ExecutionPolicy Bypass -File .\install.ps1 -Profile codex -Target codex -Apply
+```
+
+macOS/Linux:
+
+```bash
+./install.sh --profile codex --target codex
+./install.sh --profile codex --target codex --apply
+```
+
 ## GitHub Knowledge Model
 
 AgentWorkOS treats GitHub as the knowledge source for your agent workspace:
@@ -94,6 +108,22 @@ Recommended restore flow on a new machine:
 aw install github:OWNER/AgentWorkOS-Stack --target all --apply
 aw scan
 aw doctor
+```
+
+Profiles let one stack expose multiple install sizes:
+
+| Profile | Purpose |
+| --- | --- |
+| `base` | Core AgentWorkOS terms and inventory skill |
+| `codex` | Codex runtime profile with core authoring skills such as `roadmp-writer` |
+| `just-ddl` | Just-DDL operator profile with managed repo checkout references |
+| `full` | Every package and managed repo declared by the stack |
+
+Examples:
+
+```powershell
+aw doctor --manifest agentworkos.toml --profile just-ddl
+aw sync --manifest agentworkos.toml --target codex --profile codex --apply
 ```
 
 Read the step-by-step tutorial in [GitHub Knowledge Management](./docs/github-knowledge.md) or the [GitHub Pages docs site](https://harzva.github.io/AgentWorkOS/).

@@ -10,8 +10,49 @@
       "linux-x64"
     ],
     "codex_home": "~/.codex",
-    "claude_home": "~/.claude"
+    "claude_home": "~/.claude",
+    "default_profile": "codex"
   },
+  "profiles": [
+    {
+      "name": "base",
+      "description": "Core AgentWorkOS terms and inventory skill.",
+      "packages": [
+        "io.github.harzva.agentworkos.inventory",
+        "io.github.harzva.agentworkos.terms"
+      ]
+    },
+    {
+      "name": "codex",
+      "description": "Codex runtime profile with core AgentWorkOS skills.",
+      "extends": [
+        "base"
+      ],
+      "packages": [
+        "io.github.harzva.agentworkos.roadmp-writer"
+      ]
+    },
+    {
+      "name": "just-ddl",
+      "description": "Just-DDL operator profile. Installs Codex skills and checks out the Hub repository as a managed repo reference.",
+      "extends": [
+        "codex"
+      ],
+      "repos": [
+        "io.github.just-agent.just-ddl"
+      ]
+    },
+    {
+      "name": "full",
+      "description": "All packages and managed repo references in this stack.",
+      "packages": [
+        "*"
+      ],
+      "repos": [
+        "*"
+      ]
+    }
+  ],
   "packages": [
     {
       "id": "io.github.harzva.agentworkos.inventory",
@@ -34,8 +75,8 @@
       "resolved_path": ".",
       "source_kind": "git-local",
       "remote": "https://github.com/Harzva/AgentWorkOS.git",
-      "commit": "6e85b43967e3c7cf5756549256014ab38e1d75cb",
-      "content_hash": "3e8126190aef3d44afe900fab45bf0f5db0dd83aacde2452c5b70d64c6349178"
+      "commit": "9c8bed9f83196c4c1c285be5d206c88d51719803",
+      "content_hash": "1c31d5868dbe15c46d640673dbfb2f20c8ae90445c08862763511d032a2ae4b0"
     },
     {
       "id": "io.github.harzva.agentworkos.terms",
@@ -58,6 +99,30 @@
       "resolved_path": "./TERMS.md",
       "content_hash": "151e42a80792416f7d37204a26c07d01df97dbe6f92610504d38bdaaed005e46",
       "source_kind": "file"
+    },
+    {
+      "id": "io.github.harzva.agentworkos.roadmp-writer",
+      "type": "skill",
+      "source": ".",
+      "path": "skills/roadmp-writer",
+      "install_to": "skills/roadmp-writer",
+      "targets": [
+        {
+          "runtime": "codex",
+          "install_to": "skills/roadmp-writer"
+        },
+        {
+          "runtime": "claude-code",
+          "install_to": "skills/roadmp-writer",
+          "adapter": "skill-to-claude-skill"
+        }
+      ],
+      "ref": "main",
+      "resolved_path": ".",
+      "source_kind": "git-local",
+      "remote": "https://github.com/Harzva/AgentWorkOS.git",
+      "commit": "9c8bed9f83196c4c1c285be5d206c88d51719803",
+      "content_hash": "1c31d5868dbe15c46d640673dbfb2f20c8ae90445c08862763511d032a2ae4b0"
     }
   ],
   "repos": [
@@ -65,6 +130,12 @@
       "id": "io.github.harzva.agentworkos",
       "source": "https://github.com/Harzva/AgentWorkOS.git",
       "checkout_to": "repos/AgentWorkOS",
+      "ref": "main"
+    },
+    {
+      "id": "io.github.just-agent.just-ddl",
+      "source": "https://github.com/Just-Agent/just-ddl.git",
+      "checkout_to": "repos/just-ddl",
       "ref": "main"
     }
   ]

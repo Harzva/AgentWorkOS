@@ -190,6 +190,119 @@ adapter = "skill-to-claude-skill"
     assert "skills\\local-skill-claude" in claude.stdout or "skills/local-skill-claude" in claude.stdout
 
 
+def test_sync_profile_filters_packages_and_repos(tmp_path: Path) -> None:
+    skill_a = tmp_path / "skill-a"
+    skill_b = tmp_path / "skill-b"
+    skill_a.mkdir()
+    skill_b.mkdir()
+    (skill_a / "SKILL.md").write_text("# A\n", encoding="utf-8")
+    (skill_b / "SKILL.md").write_text("# B\n", encoding="utf-8")
+    codex_home = tmp_path / ".codex"
+    codex_home_toml = str(codex_home).replace("\\", "/")
+    manifest = tmp_path / "agentworkos.toml"
+    manifest.write_text(
+        f"""
+[stack]
+name = "test"
+version = "0.1.0"
+codex_home = "{codex_home_toml}"
+
+[[profiles]]
+name = "base"
+packages = ["skill.a"]
+
+[[profiles]]
+name = "extended"
+extends = ["base"]
+packages = ["skill.b"]
+
+[[packages]]
+id = "skill.a"
+type = "skill"
+source = "./skill-a"
+install_to = "skills/a"
+
+[[packages]]
+id = "skill.b"
+type = "skill"
+source = "./skill-b"
+install_to = "skills/b"
+
+[[repos]]
+id = "repo.unused"
+source = "https://github.com/Owner/Unused.git"
+checkout_to = "repos/unused"
+""".strip()
+        + "\n",
+        encoding="utf-8",
+    )
+
+    base = run_aw("sync", "--manifest", str(manifest), "--profile", "base", cwd=ROOT)
+    extended = run_aw("sync", "--manifest", str(manifest), "--profile", "extended", cwd=ROOT)
+
+    assert base.returncode == 0, base.stderr
+    assert extended.returncode == 0, extended.stderr
+    assert "skills\\a" in base.stdout or "skills/a" in base.stdout
+    assert "skills\\b" not in base.stdout and "skills/b" not in base.stdout
+    assert "skills\\a" in extended.stdout or "skills/a" in extended.stdout
+    assert "skills\\b" in extended.stdout or "skills/b" in extended.stdout
+    assert "Unused" not in extended.stdout
+
+
+def test_sync_profile_can_include_repo_checkout(tmp_path: Path) -> None:
+    repo_src = tmp_path / "repo-src"
+    init_git_repo(repo_src)
+    (repo_src / "README.md").write_text("# Repo\n", encoding="utf-8")
+    commit_all(repo_src)
+    github_base = make_bare_github_repo(repo_src, tmp_path / "github", "Owner", "Repo")
+    manifest = tmp_path / "agentworkos.toml"
+    manifest.write_text(
+        """
+[stack]
+name = "test"
+version = "0.1.0"
+
+[[profiles]]
+name = "with-repo"
+repos = ["repo.demo"]
+
+[[repos]]
+id = "repo.demo"
+source = "github:Owner/Repo"
+checkout_to = "repos/repo"
+ref = "main"
+""".strip()
+        + "\n",
+        encoding="utf-8",
+    )
+    env = {"AW_HOME": str(tmp_path / "aw-home"), "AW_GITHUB_BASE_URL": github_base}
+
+    dry_run = run_aw("sync", "--manifest", str(manifest), "--profile", "with-repo", cwd=ROOT, env=env)
+    assert dry_run.returncode == 0, dry_run.stderr
+    assert "would clone" in dry_run.stdout
+
+    applied = run_aw("sync", "--manifest", str(manifest), "--profile", "with-repo", "--apply", cwd=ROOT, env=env)
+    assert applied.returncode == 0, applied.stderr
+    assert (tmp_path / "aw-home" / "repos" / "repo" / "README.md").exists()
+
+
+def test_doctor_unknown_profile_fails(tmp_path: Path) -> None:
+    manifest = tmp_path / "agentworkos.toml"
+    manifest.write_text(
+        """
+[stack]
+name = "test"
+version = "0.1.0"
+""".strip()
+        + "\n",
+        encoding="utf-8",
+    )
+
+    result = run_aw("doctor", "--manifest", str(manifest), "--profile", "missing", cwd=ROOT)
+    assert result.returncode == 1
+    assert "unknown profile: missing" in result.stdout
+
+
 def test_install_github_stack_dry_run_and_apply_all(tmp_path: Path) -> None:
     stack_repo = tmp_path / "stack-src"
     init_git_repo(stack_repo)

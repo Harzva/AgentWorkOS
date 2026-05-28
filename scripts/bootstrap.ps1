@@ -1,6 +1,10 @@
 [CmdletBinding()]
 param(
     [string]$Root = ".",
+    [ValidateSet("base", "codex", "just-ddl", "full")]
+    [string]$Profile = "codex",
+    [ValidateSet("codex", "claude-code", "claude", "all")]
+    [string]$Target = "codex",
     [switch]$Apply
 )
 
@@ -13,12 +17,12 @@ try {
     aw init --root .
     aw scan --workspace .
     aw lock --offline
-    aw doctor
+    aw doctor --profile $Profile
     if ($Apply) {
-        aw sync --apply
+        aw sync --profile $Profile --target $Target --apply
     }
     else {
-        aw sync
+        aw sync --profile $Profile --target $Target
     }
 }
 finally {

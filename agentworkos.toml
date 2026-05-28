@@ -4,6 +4,37 @@ version = "0.1.0"
 platforms = ["windows-x64", "darwin-arm64", "linux-x64"]
 codex_home = "~/.codex"
 claude_home = "~/.claude"
+default_profile = "codex"
+
+[[profiles]]
+name = "base"
+description = "Core AgentWorkOS terms and inventory skill."
+packages = [
+  "io.github.harzva.agentworkos.inventory",
+  "io.github.harzva.agentworkos.terms"
+]
+
+[[profiles]]
+name = "codex"
+description = "Codex runtime profile with core AgentWorkOS skills."
+extends = ["base"]
+packages = [
+  "io.github.harzva.agentworkos.roadmp-writer"
+]
+
+[[profiles]]
+name = "just-ddl"
+description = "Just-DDL operator profile. Installs Codex skills and checks out the Hub repository as a managed repo reference."
+extends = ["codex"]
+repos = [
+  "io.github.just-agent.just-ddl"
+]
+
+[[profiles]]
+name = "full"
+description = "All packages and managed repo references in this stack."
+packages = ["*"]
+repos = ["*"]
 
 [[packages]]
 id = "io.github.harzva.agentworkos.inventory"
@@ -36,8 +67,30 @@ runtime = "claude-code"
 install_to = "TERMS.md"
 adapter = "terms-to-claude-memory"
 
+[[packages]]
+id = "io.github.harzva.agentworkos.roadmp-writer"
+type = "skill"
+source = "."
+path = "skills/roadmp-writer"
+install_to = "skills/roadmp-writer"
+
+[[packages.targets]]
+runtime = "codex"
+install_to = "skills/roadmp-writer"
+
+[[packages.targets]]
+runtime = "claude-code"
+install_to = "skills/roadmp-writer"
+adapter = "skill-to-claude-skill"
+
 [[repos]]
 id = "io.github.harzva.agentworkos"
 source = "https://github.com/Harzva/AgentWorkOS.git"
 checkout_to = "repos/AgentWorkOS"
+ref = "main"
+
+[[repos]]
+id = "io.github.just-agent.just-ddl"
+source = "https://github.com/Just-Agent/just-ddl.git"
+checkout_to = "repos/just-ddl"
 ref = "main"
