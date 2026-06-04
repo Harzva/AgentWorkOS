@@ -29,6 +29,9 @@
 </div>
 
 <p align="center">
+  <img src="./docs/readme-assets/promo-agentworkos.png" alt="AgentWorkOS promo card" width="920" />
+</p>
+<p align="center">
   <img src="./docs/readme-assets/architecture.svg" alt="AgentWorkOS architecture" width="920" />
 </p>
 
