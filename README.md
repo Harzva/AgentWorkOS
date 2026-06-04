@@ -184,6 +184,32 @@ See [Agent Runtime Targets](./docs/agent-targets.md) for the adapter matrix and 
 | `aw doctor` | Check manifest health and common drift |
 | `aw explain 三端同步` | Expand a shorthand term from `TERMS.md` |
 
+## What `aw` Commands Update
+
+`aw` is the short CLI command for the AgentWorkOS package manager. `awos` remains available as a backward-compatible alias, but new docs and scripts should use `aw`.
+
+| Command | What it does | Writes runtime files? |
+| --- | --- | --- |
+| `aw lock` | Updates the current repo's `agentworkos.lock.json` from `agentworkos.toml` | No |
+| `aw doctor` | Checks manifest health, profile resolution, package paths, and target declarations | No |
+| `aw sync --target codex` | Previews which packages would be projected into the Codex runtime | No, dry-run only |
+| `aw sync --target codex --apply` | Copies the selected skills, agents, rules, and terms into `~/.codex` | Yes |
+| `aw sync --target claude-code --apply` | Copies the selected packages into `~/.claude` or Claude Code project targets | Yes |
+| `aw sync --target all --apply` | Applies the selected stack to every supported runtime target declared by the manifest | Yes |
+| `aw install github:OWNER/REPO` | Clones a GitHub stack/package into a temporary install flow and previews runtime projection | No, dry-run only |
+| `aw install github:OWNER/REPO --apply` | Installs from GitHub and writes the selected runtime targets | Yes |
+
+In practical terms:
+
+```text
+agentworkos.toml
+-> agentworkos.lock.json
+-> aw sync / aw install
+-> ~/.codex and/or ~/.claude runtime copies
+```
+
+So `aw sync --apply` does not update GitHub or npm. It updates the local agent runtime library selected by `--target`, such as `.codex` for Codex or `.claude` for Claude Code.
+
 ## Package Types
 
 | Type | Meaning |
