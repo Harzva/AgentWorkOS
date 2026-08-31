@@ -1,0 +1,7 @@
+{
+  "suggestedFilename": "sample-images.zip",
+  "files": [
+    {"url": "https://httpbin.org/image/png", "zipPath": "images/sample.png"},
+    {"url": "https://httpbin.org/robots.txt", "zipPath": "docs/robots.txt"}
+  ]
+}
