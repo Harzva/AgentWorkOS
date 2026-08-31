@@ -1,0 +1,191 @@
+name: Build embodied AI paper bundle
+
+on:
+  push:
+    branches:
+      - embodied-report-papers-20260831
+    paths:
+      - ".github/workflows/build_embodied_paper_bundle.yml"
+      - "paper_bundle/**"
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Prepare manifest
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p paper_bundle
+          cat > paper_bundle/papers.tsv <<'EOF'
+          world_models|1809.01999|Recurrent World Models Facilitate Policy Evolution|01_WorldModels_Recurrent_World_Models_1809.01999.pdf
+          world_models|1811.04551|Learning Latent Dynamics for Planning from Pixels (PlaNet)|02_WorldModels_PlaNet_1811.04551.pdf
+          world_models|1912.01603|Dream to Control: Learning Behaviors by Latent Imagination (Dreamer)|03_WorldModels_Dreamer_1912.01603.pdf
+          world_models|2301.04104|Mastering Diverse Domains through World Models (DreamerV3)|04_WorldModels_DreamerV3_2301.04104.pdf
+          world_models|1911.08265|Mastering Atari, Go, Chess and Shogi by Planning with a Learned Model (MuZero)|05_WorldModels_MuZero_1911.08265.pdf
+          world_models|2402.15391|Genie: Generative Interactive Environments|06_WorldModels_Genie_2402.15391.pdf
+          world_models|2310.06114|Learning Interactive Real-World Simulators (UniSim)|07_WorldModels_UniSim_2310.06114.pdf
+          world_models|2309.17080|GAIA-1: A Generative World Model for Autonomous Driving|08_WorldModels_GAIA1_2309.17080.pdf
+          world_models|2405.12399|Diffusion for World Modeling: Visual Details Matter in Atari (DIAMOND)|09_WorldModels_DIAMOND_2405.12399.pdf
+          world_models|2506.09985|V-JEPA 2: Self-Supervised Video Models Enable Understanding, Prediction and Planning|10_WorldModels_VJEPA2_2506.09985.pdf
+          world_models|2605.00080|World Model for Robot Learning: A Comprehensive Survey|11_WorldModels_Robot_Learning_Survey_2605.00080.pdf
+          simulation|1712.05474|AI2-THOR: An Interactive 3D Environment for Visual AI|12_Simulation_AI2THOR_1712.05474.pdf
+          simulation|2003.08515|SAPIEN: A Simulated Part-based Interactive Environment|13_Simulation_SAPIEN_2003.08515.pdf
+          simulation|2106.14405|Habitat 2.0: Training Home Assistants to Rearrange their Habitat|14_Simulation_Habitat2_2106.14405.pdf
+          simulation|2108.03272|iGibson 2.0: Object-Centric Simulation for Robot Learning of Everyday Household Tasks|15_Simulation_iGibson2_2108.03272.pdf
+          simulation|2403.09227|BEHAVIOR-1K: A Human-Centered Embodied AI Benchmark with 1,000 Everyday Activities and Realistic Simulation|16_Simulation_BEHAVIOR1K_2403.09227.pdf
+          simulation|2108.10470|Isaac Gym: High Performance GPU-Based Physics Simulation for Robot Learning|17_Simulation_IsaacGym_2108.10470.pdf
+          simulation|2302.04659|ManiSkill2: A Unified Benchmark for Generalizable Manipulation Skills|18_Simulation_ManiSkill2_2302.04659.pdf
+          simulation|2406.02523|RoboCasa: Large-Scale Simulation of Everyday Tasks for Generalist Robots|19_Simulation_RoboCasa_2406.02523.pdf
+          simulation|2412.05789|InfiniteWorld: A Unified Scalable Simulation Framework for General Visual-Language Robot Interaction|20_Simulation_InfiniteWorld_2412.05789.pdf
+          simulation|2007.04954|ThreeDWorld: A Platform for Interactive Multi-Modal Physical Simulation|21_Simulation_ThreeDWorld_2007.04954.pdf
+          simulation|2206.06994|ProcTHOR: Large-Scale Embodied AI Using Procedural Generation|22_Simulation_ProcTHOR_2206.06994.pdf
+          policy_models|2212.06817|RT-1: Robotics Transformer for Real-World Control at Scale|23_Policy_RT1_2212.06817.pdf
+          policy_models|2303.03378|PaLM-E: An Embodied Multimodal Language Model|24_Policy_PaLME_2303.03378.pdf
+          policy_models|2307.15818|RT-2: Vision-Language-Action Models Transfer Web Knowledge to Robotic Control|25_Policy_RT2_2307.15818.pdf
+          policy_models|2310.08864|Open X-Embodiment: Robotic Learning Datasets and RT-X Models|26_Policy_OpenXEmbodiment_2310.08864.pdf
+          policy_models|2303.04137|Diffusion Policy: Visuomotor Policy Learning via Action Diffusion|27_Policy_DiffusionPolicy_2303.04137.pdf
+          policy_models|2304.13705|Learning Fine-Grained Bimanual Manipulation with Low-Cost Hardware (ACT)|28_Policy_ACT_2304.13705.pdf
+          policy_models|2405.12213|Octo: An Open-Source Generalist Robot Policy|29_Policy_Octo_2405.12213.pdf
+          policy_models|2406.09246|OpenVLA: An Open-Source Vision-Language-Action Model|30_Policy_OpenVLA_2406.09246.pdf
+          policy_models|2410.24164|pi0: A Vision-Language-Action Flow Model for General Robot Control|31_Policy_pi0_2410.24164.pdf
+          policy_models|2504.16054|pi0.5: A Vision-Language-Action Model with Open-World Generalization|32_Policy_pi05_2504.16054.pdf
+          policy_models|2503.14734|GR00T N1: An Open Foundation Model for Generalist Humanoid Robots|33_Policy_GR00TN1_2503.14734.pdf
+          task_relevant_reconstruction|2606.30809|GaussLite: Online Task-Conditioned 3D Gaussian Splatting for Real-Time Robotic Mapping|34_TaskA_GaussLite_2606.30809.pdf
+          task_relevant_reconstruction|2602.10101|Robo3R: Enhancing Robotic Manipulation with Accurate Feed-Forward 3D Reconstruction|35_TaskA_Robo3R_2602.10101.pdf
+          task_relevant_reconstruction|2603.27797|Which Reconstruction Model Should a Robot Use? Routing Image-to-3D Models for Cost-Aware Robotic Manipulation|36_TaskA_SCOUT_2603.27797.pdf
+          task_relevant_reconstruction|2508.18802|HyperTASR: Hypernetwork-Driven Task-Aware Scene Representations for Robust Manipulation|37_TaskA_HyperTASR_2508.18802.pdf
+          task_relevant_reconstruction|2505.21652|PartInstruct: Part-level Instruction Following for Fine-grained Robot Manipulation|38_TaskA_PartInstruct_2505.21652.pdf
+          task_relevant_reconstruction|2409.11941|GauTOAO: Gaussian-based Task-Oriented Affordance of Objects|39_TaskA_GauTOAO_2409.11941.pdf
+          task_relevant_reconstruction|2606.05975|T-FunS3D: Task-Driven Hierarchical Open-Vocabulary 3D Functionality Segmentation|40_TaskA_TFunS3D_2606.05975.pdf
+          task_relevant_reconstruction|2303.09553|LERF: Language Embedded Radiance Fields|41_TaskA_LERF_2303.09553.pdf
+          task_relevant_reconstruction|2312.16084|LangSplat: 3D Language Gaussian Splatting|42_TaskA_LangSplat_2312.16084.pdf
+          goal_state_generation|2403.09631|3D-VLA: A 3D Vision-Language-Action Generative World Model|43_TaskB_3DVLA_2403.09631.pdf
+          goal_state_generation|2309.12188|SG-Bot: Object Rearrangement via Coarse-to-Fine Robotic Imagination on Scene Graphs|44_TaskB_SGBot_2309.12188.pdf
+          goal_state_generation|2408.01655|Stimulating Imagination: Towards General-purpose Object Rearrangement|45_TaskB_SPORT_2408.01655.pdf
+          goal_state_generation|2412.18877|Goal State Generation for Robotic Manipulation Based on Linguistically Guided Hybrid Gaussian Diffusion|46_TaskB_LHGD_2412.18877.pdf
+          goal_state_generation|2506.23919|Goal-VLA: Image-Generative VLMs as Object-Centric World Models Empowering Zero-shot Robot Manipulation|47_TaskB_GoalVLA_2506.23919.pdf
+          goal_state_generation|2511.04381|ForeRobo: Unlocking Infinite Simulation Data for 3D Goal-driven Robotic Manipulation|48_TaskB_ForeRobo_2511.04381.pdf
+          goal_state_generation|2605.11144|Forecast-aware Gaussian Splatting for Predictive 3D Representation in Language-Guided Pick-and-Place Manipulation|49_TaskB_ForecastGS_2605.11144.pdf
+          goal_state_generation|2603.17583|Edit-As-Act: Goal-Regressive Planning for Open-Vocabulary 3D Indoor Scene Editing|50_TaskB_EditAsAct_2603.17583.pdf
+          goal_state_generation|2606.14168|MUSE: Agentic 3D Scene Authoring via Memory-Grounded Incremental Requirement Satisfaction|51_TaskB_MUSE_2606.14168.pdf
+          goal_state_generation|2608.27371|Embodied Scene Rearrangement Planning|52_TaskB_ESRP_2608.27371.pdf
+          EOF
+
+      - name: Download and validate PDFs
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p paper_bundle/files
+          printf "category\tarxiv_id\ttitle\tfilename\tstatus\tbytes\tsource_url\n" > paper_bundle/download_status.tsv
+
+          download_one() {
+            local category="$1"
+            local id="$2"
+            local title="$3"
+            local filename="$4"
+            local dir="paper_bundle/files/${category}"
+            local out="${dir}/${filename}"
+            mkdir -p "$dir"
+
+            local sources=(
+              "https://arxiv.org/pdf/${id}.pdf"
+              "https://export.arxiv.org/pdf/${id}.pdf"
+              "https://arxiv.org/pdf/${id}"
+            )
+            local ok=0
+            local used=""
+            for url in "${sources[@]}"; do
+              rm -f "${out}.part"
+              if curl --fail --location --retry 5 --retry-all-errors --retry-delay 4 \
+                --connect-timeout 30 --max-time 600 \
+                -A "Mozilla/5.0 (GitHub-Actions; embodied research paper bundle)" \
+                "$url" -o "${out}.part"; then
+                if [ "$(head -c 4 "${out}.part" || true)" = "%PDF" ] && [ "$(stat -c%s "${out}.part")" -gt 10000 ]; then
+                  mv "${out}.part" "$out"
+                  ok=1
+                  used="$url"
+                  break
+                fi
+              fi
+              sleep 3
+            done
+
+            if [ "$ok" -eq 1 ]; then
+              local size
+              size="$(stat -c%s "$out")"
+              printf "%s\t%s\t%s\t%s\tok\t%s\t%s\n" "$category" "$id" "$title" "$filename" "$size" "$used" \
+                >> paper_bundle/download_status.tsv
+              echo "OK $id $filename ($size bytes)"
+            else
+              rm -f "${out}.part" "$out"
+              printf "%s\t%s\t%s\t%s\tfailed\t0\t\n" "$category" "$id" "$title" "$filename" \
+                >> paper_bundle/download_status.tsv
+              echo "FAILED $id $filename" >&2
+              return 1
+            fi
+          }
+
+          export -f download_one
+          failures=0
+          while IFS='|' read -r category id title filename; do
+            if ! download_one "$category" "$id" "$title" "$filename"; then
+              failures=$((failures+1))
+            fi
+          done < paper_bundle/papers.tsv
+
+          echo "failures=$failures"
+          if [ "$failures" -ne 0 ]; then
+            echo "One or more paper downloads failed." >&2
+            exit 1
+          fi
+
+      - name: Create Chinese README and ZIP
+        shell: bash
+        run: |
+          set -euo pipefail
+          total="$(find paper_bundle/files -type f -name '*.pdf' | wc -l | tr -d ' ')"
+          total_bytes="$(du -sb paper_bundle/files | cut -f1)"
+          {
+            echo "# 世界模型、仿真环境、策略模型与任务特定三维重建论文合集"
+            echo
+            echo "- 生成日期：2026-08-31"
+            echo "- PDF 数量：${total}"
+            echo "- 文件总大小（字节）：${total_bytes}"
+            echo "- 各论文按照方向分目录保存；文件名以报告中的顺序编号。"
+            echo "- download_status.tsv 记录 arXiv 编号、标题、下载状态、大小和来源。"
+            echo
+            echo "## 目录"
+            echo
+            echo "1. world_models：世界模型"
+            echo "2. simulation：仿真环境与具身基准"
+            echo "3. policy_models：策略模型 / VLA"
+            echo "4. task_relevant_reconstruction：任务相关对象与交互区域重建"
+            echo "5. goal_state_generation：初始状态到可执行目标状态生成"
+          } > paper_bundle/files/README_论文清单.md
+          cp paper_bundle/download_status.tsv paper_bundle/files/download_status.tsv
+          cd paper_bundle/files
+          zip -9 -r ../../世界模型_仿真环境_策略模型与任务特定三维重建_论文合集.zip .
+          cd ../..
+          sha256sum paper_bundle/世界模型_仿真环境_策略模型与任务特定三维重建_论文合集.zip \
+            > paper_bundle/世界模型_仿真环境_策略模型与任务特定三维重建_论文合集.zip.sha256
+          ls -lh paper_bundle/世界模型_仿真环境_策略模型与任务特定三维重建_论文合集.zip
+
+      - name: Upload paper bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: embodied-research-paper-bundle-20260831
+          path: |
+            paper_bundle/世界模型_仿真环境_策略模型与任务特定三维重建_论文合集.zip
+            paper_bundle/世界模型_仿真环境_策略模型与任务特定三维重建_论文合集.zip.sha256
+            paper_bundle/download_status.tsv
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 30
