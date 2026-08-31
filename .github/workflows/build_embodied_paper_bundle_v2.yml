@@ -1,0 +1,120 @@
+name: Build embodied AI paper bundle v2
+
+on:
+  push:
+    branches:
+      - embodied-report-papers-20260831
+    paths:
+      - ".github/workflows/build_embodied_paper_bundle_v2.yml"
+      - "paper_bundle/papers.tsv"
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download and validate PDFs
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p paper_bundle/files
+          printf "category\tarxiv_id\ttitle\tfilename\tstatus\tbytes\tsource_url\n" > paper_bundle/download_status.tsv
+
+          download_one() {
+            local category="$1"
+            local id="$2"
+            local title="$3"
+            local filename="$4"
+            local dir="paper_bundle/files/${category}"
+            local out="${dir}/${filename}"
+            mkdir -p "$dir"
+            local ok=0
+            local used=""
+            local sources=(
+              "https://arxiv.org/pdf/${id}.pdf"
+              "https://export.arxiv.org/pdf/${id}.pdf"
+              "https://arxiv.org/pdf/${id}"
+            )
+            for url in "${sources[@]}"; do
+              rm -f "${out}.part"
+              if curl --fail --location --retry 5 --retry-all-errors --retry-delay 4 \
+                --connect-timeout 30 --max-time 600 \
+                -A "Mozilla/5.0 (GitHub-Actions; embodied-research-bundle)" \
+                "$url" -o "${out}.part"; then
+                if [ "$(head -c 4 "${out}.part" || true)" = "%PDF" ] && [ "$(stat -c%s "${out}.part")" -gt 10000 ]; then
+                  mv "${out}.part" "$out"
+                  ok=1
+                  used="$url"
+                  break
+                fi
+              fi
+              sleep 2
+            done
+            if [ "$ok" -eq 1 ]; then
+              local size
+              size="$(stat -c%s "$out")"
+              printf "%s\t%s\t%s\t%s\tok\t%s\t%s\n" "$category" "$id" "$title" "$filename" "$size" "$used" >> paper_bundle/download_status.tsv
+              echo "OK $id $filename ($size bytes)"
+            else
+              rm -f "${out}.part" "$out"
+              printf "%s\t%s\t%s\t%s\tfailed\t0\t\n" "$category" "$id" "$title" "$filename" >> paper_bundle/download_status.tsv
+              echo "FAILED $id $filename" >&2
+              return 1
+            fi
+          }
+
+          failures=0
+          while IFS='|' read -r category id title filename; do
+            [ -z "$id" ] && continue
+            if ! download_one "$category" "$id" "$title" "$filename"; then
+              failures=$((failures+1))
+            fi
+          done < paper_bundle/papers.tsv
+
+          echo "failures=$failures"
+          test "$failures" -eq 0
+
+      - name: Create README and ZIP
+        shell: bash
+        run: |
+          set -euo pipefail
+          total="$(find paper_bundle/files -type f -name '*.pdf' | wc -l | tr -d ' ')"
+          total_bytes="$(du -sb paper_bundle/files | cut -f1)"
+          {
+            echo "# 世界模型、仿真环境、策略模型与任务特定三维重建论文合集"
+            echo
+            echo "- 生成日期：2026-08-31"
+            echo "- PDF 数量：${total}"
+            echo "- 文件总大小（字节）：${total_bytes}"
+            echo "- 论文按方向分目录保存，编号与汇报文档附录一致。"
+            echo "- download_status.tsv 记录 arXiv 编号、标题、文件大小和来源。"
+            echo
+            echo "## 目录"
+            echo "1. world_models：世界模型"
+            echo "2. simulation：仿真环境与具身基准"
+            echo "3. policy_models：策略模型 / VLA"
+            echo "4. task_relevant_reconstruction：任务相关对象与交互区域重建"
+            echo "5. goal_state_generation：初始状态到可执行目标状态生成"
+          } > paper_bundle/files/README_论文清单.md
+          cp paper_bundle/download_status.tsv paper_bundle/files/download_status.tsv
+          (cd paper_bundle/files && zip -0 -r ../世界模型_仿真环境_策略模型与任务特定三维重建_论文合集.zip .)
+          sha256sum paper_bundle/世界模型_仿真环境_策略模型与任务特定三维重建_论文合集.zip > paper_bundle/世界模型_仿真环境_策略模型与任务特定三维重建_论文合集.zip.sha256
+          ls -lh paper_bundle/世界模型_仿真环境_策略模型与任务特定三维重建_论文合集.zip
+
+      - name: Upload paper bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: embodied-research-paper-bundle-20260831-v2
+          path: |
+            paper_bundle/世界模型_仿真环境_策略模型与任务特定三维重建_论文合集.zip
+            paper_bundle/世界模型_仿真环境_策略模型与任务特定三维重建_论文合集.zip.sha256
+            paper_bundle/download_status.tsv
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 30
